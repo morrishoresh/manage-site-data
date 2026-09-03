@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Manage Site Data</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="tab-page">
+  <div class="wrap">
+    <header>
+      <div class="title-row">
+        <h1>Manage Site Data</h1>
+      </div>
+      <div id="site-host" class="site-host">Loading…</div>
+    </header>
+
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="cookies" type="button">Cookies</button>
+      <button class="tab-btn" data-tab="storage" type="button">Local Storage</button>
+    </nav>
+
+    <section id="panel-cookies" class="panel active">
+      <div class="panel-toolbar">
+        <span class="count"><span id="cookies-count">0</span> cookie(s)</span>
+        <button id="delete-all-cookies" class="delete-all-btn" type="button">Delete all cookies</button>
+      </div>
+      <ul id="cookies-list" class="entry-list">
+        <li class="empty">Loading…</li>
+      </ul>
+    </section>
+
+    <section id="panel-storage" class="panel">
+      <div class="panel-toolbar">
+        <span class="count"><span id="storage-count">0</span> entr(ies)</span>
+        <button id="delete-all-storage" class="delete-all-btn" type="button">Delete all local storage</button>
+      </div>
+      <ul id="storage-list" class="entry-list">
+        <li class="empty">Loading…</li>
+      </ul>
+    </section>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

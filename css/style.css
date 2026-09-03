@@ -1,0 +1,227 @@
+:root {
+  --bg: #ffffff;
+  --text: #1c2126;
+  --muted: #667080;
+  --border: #e2e5e9;
+  --accent: #2b3a4a;
+  --accent-light: #eef3f6;
+  --danger: #c83c37;
+  --danger-hover: #a92f2b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  color: var(--text);
+  background: var(--bg);
+}
+
+.wrap {
+  width: 380px;
+  display: flex;
+  flex-direction: column;
+}
+
+body.tab-page .wrap {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+header {
+  padding: 12px 14px 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title-row h1 {
+  font-size: 14px;
+  margin: 0;
+  font-weight: 600;
+}
+
+#open-tab-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-size: 11px;
+  color: var(--accent);
+  cursor: pointer;
+}
+
+#open-tab-btn:hover {
+  background: var(--accent-light);
+}
+
+.site-host {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--muted);
+  word-break: break-all;
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 8px 6px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.tab-btn.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.panel {
+  display: none;
+  flex-direction: column;
+}
+
+.panel.active {
+  display: flex;
+}
+
+.panel-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+}
+
+.count {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.delete-all-btn {
+  background: var(--danger);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 10px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.delete-all-btn:hover {
+  background: var(--danger-hover);
+}
+
+ul.entry-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 320px;
+  overflow-y: auto;
+  border-top: 1px solid var(--border);
+}
+
+body.tab-page ul.entry-list {
+  max-height: none;
+}
+
+li.entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.entry-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.entry-name {
+  font-weight: 600;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.entry-value {
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.del-btn {
+  flex-shrink: 0;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  width: 22px;
+  height: 22px;
+  color: var(--danger);
+  cursor: pointer;
+  font-size: 11px;
+  line-height: 1;
+}
+
+.del-btn:hover {
+  background: var(--danger);
+  color: #fff;
+  border-color: var(--danger);
+}
+
+li.empty {
+  padding: 16px 14px;
+  color: var(--muted);
+  font-size: 12px;
+  text-align: center;
+}
+
+/* Tab (full-page) mode: show values in full instead of truncating */
+body.tab-page li.entry {
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 14px;
+}
+
+body.tab-page .entry-info {
+  width: 100%;
+}
+
+body.tab-page .entry-name,
+body.tab-page .entry-value {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+  word-break: break-all;
+}
+
+body.tab-page .entry-value {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  line-height: 1.4;
+}
+
+body.tab-page .del-btn {
+  align-self: flex-end;
+}
