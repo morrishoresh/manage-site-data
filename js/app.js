@@ -84,6 +84,16 @@ function getBaseDomain(hostname) {
   return parts.join(".");
 }
 
+// A cookie is a session cookie when it has no expirationDate at all.
+// Never treat those as expired, regardless of their age.
+function isSessionCookie(c) {
+  return typeof c.expirationDate !== "number";
+}
+
+function isExpiredCookie(c) {
+  return !isSessionCookie(c) && c.expirationDate < Date.now() / 1000;
+}
+
 async function loadCookies() {
   const list = document.getElementById("cookies-list");
   if (!state.hostname) {
@@ -103,14 +113,17 @@ async function loadCookies() {
     return;
   }
   const baseDomain = getBaseDomain(state.hostname);
-  const nowSeconds = Date.now() / 1000;
-  const cookies = allCookies.filter((c) => {
-    if (c.domain.indexOf(baseDomain) === -1) return false;
-    // Skip expired cookies. Session cookies have no expirationDate and
-    // are kept; only cookies with a past expirationDate are dropped.
-    if (typeof c.expirationDate === "number" && c.expirationDate < nowSeconds) return false;
-    return true;
-  });
+  const matched = allCookies.filter((c) => c.domain.indexOf(baseDomain) !== -1);
+
+  // Delete expired cookies outright (not just hide them). Session cookies
+  // have no expirationDate and are never considered expired, so they're
+  // never touched here.
+  const expired = matched.filter(isExpiredCookie);
+  for (const c of expired) {
+    await removeCookie(c);
+  }
+
+  const cookies = matched.filter((c) => !isExpiredCookie(c));
   cookies.sort((a, b) => a.name.localeCompare(b.name));
   state.cookies = cookies;
   renderCookies();
@@ -128,34 +141,38 @@ function renderCookies() {
 
   const frag = document.createDocumentFragment();
   state.cookies.forEach((c) => {
-    frag.appendChild(buildEntryRow(c.name, c.value, () => deleteCookie(c)));
+    frag.appendChild(buildEntryRow(c.name, c.value, () => deleteCookie(c), formatExpiry(c)));
   });
   list.appendChild(frag);
 }
 
-async function deleteCookie(c) {
+// Human-readable expiry label shown under each cookie's value.
+function formatExpiry(c) {
+  if (isSessionCookie(c)) return "Session cookie";
+  const d = new Date(c.expirationDate * 1000);
+  return "Expires " + d.toLocaleString();
+}
+
+async function removeCookie(c) {
   const protocol = c.secure ? "https" : "http";
   const domain = c.domain.startsWith(".") ? c.domain.substring(1) : c.domain;
   const url = protocol + "://" + domain + c.path;
   try {
     await browser.cookies.remove({ url, name: c.name, storeId: c.storeId });
   } catch (e) {
-    /* ignore, list refresh below reflects actual state */
+    /* ignore, list refresh reflects actual state */
   }
+}
+
+async function deleteCookie(c) {
+  await removeCookie(c);
   await loadCookies();
 }
 
 async function deleteAllCookies() {
   const targets = state.cookies.slice();
   for (const c of targets) {
-    const protocol = c.secure ? "https" : "http";
-    const domain = c.domain.startsWith(".") ? c.domain.substring(1) : c.domain;
-    const url = protocol + "://" + domain + c.path;
-    try {
-      await browser.cookies.remove({ url, name: c.name, storeId: c.storeId });
-    } catch (e) {
-      /* ignore */
-    }
+    await removeCookie(c);
   }
   await loadCookies();
 }
@@ -227,7 +244,7 @@ async function deleteAllStorage() {
 
 /* ---------- Shared row builder ---------- */
 
-function buildEntryRow(name, value, onDelete) {
+function buildEntryRow(name, value, onDelete, meta) {
   const li = document.createElement("li");
   li.className = "entry";
 
@@ -246,6 +263,14 @@ function buildEntryRow(name, value, onDelete) {
 
   info.appendChild(nameEl);
   info.appendChild(valueEl);
+
+  if (meta) {
+    const metaEl = document.createElement("div");
+    metaEl.className = "entry-meta";
+    metaEl.textContent = meta;
+    metaEl.title = meta;
+    info.appendChild(metaEl);
+  }
 
   const del = document.createElement("button");
   del.className = "del-btn";

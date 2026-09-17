@@ -171,6 +171,16 @@ li.entry {
   text-overflow: ellipsis;
 }
 
+.entry-meta {
+  font-size: 10px;
+  color: var(--muted);
+  font-style: italic;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 1px;
+}
+
 .del-btn {
   flex-shrink: 0;
   background: none;
@@ -210,7 +220,8 @@ body.tab-page .entry-info {
 }
 
 body.tab-page .entry-name,
-body.tab-page .entry-value {
+body.tab-page .entry-value,
+body.tab-page .entry-meta {
   white-space: normal;
   overflow: visible;
   text-overflow: unset;
